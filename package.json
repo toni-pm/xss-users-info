@@ -1,0 +1,12 @@
+{
+  "name": "xss-get-client-info",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/toni-pm/xss-get-client-info.git",
+  "author": "Toni Peraira <toniperairam@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.3",
+    "geoip-lite": "^1.4.4"
+  }
+}
