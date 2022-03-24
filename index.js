@@ -1,7 +1,7 @@
 const express = require('express')
 const { lookup } = require('geoip-lite')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 const images = [
   "https://media2.giphy.com/media/YQitE4YNQNahy/giphy-downsized-large.gif",
