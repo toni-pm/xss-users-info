@@ -24,12 +24,24 @@ const images = [
   "https://c.tenor.com/X1SPPzfGWC4AAAAC/shrek.gif"
 ]
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;  
-  let item = images[Math.floor(Math.random() * images.length)];
+  const item = images[Math.floor(Math.random() * images.length)];
   console.log(ip);
   console.log(lookup(ip));
-  return res.send(item)
+  
+  request({
+    url: url,
+    encoding: null
+  }, 
+  (err, resp, buffer) => {
+    if (!err && resp.statusCode === 200){
+      res.set("Content-Type", "image/jpeg");
+      return res.send(resp.body);
+    } else {
+      return res.send('assets/pedro_sanchez.jpg');
+    }
+  });
 })
 
 app.listen(port, () => {
