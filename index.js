@@ -1,4 +1,5 @@
 const express = require('express')
+const request = require('request');
 const { lookup } = require('geoip-lite')
 const app = express()
 const port = process.env.PORT || 3000
@@ -26,7 +27,7 @@ const images = [
 
 app.get('/', async (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;  
-  const item = images[Math.floor(Math.random() * images.length)];
+  const url = images[Math.floor(Math.random() * images.length)];
   console.log(ip);
   console.log(lookup(ip));
   
@@ -35,11 +36,32 @@ app.get('/', async (req, res) => {
     encoding: null
   }, 
   (err, resp, buffer) => {
+    res.set("Content-Type", "image/jpeg");
     if (!err && resp.statusCode === 200){
-      res.set("Content-Type", "image/jpeg");
       return res.send(resp.body);
     } else {
-      return res.send('assets/pedro_sanchez.jpg');
+      return res.sendFile('assets/pedro_sanchez.jpg', { root: __dirname });
+    }
+  });
+})
+
+app.get('/:image_name', async (req, res) => {
+  const { image_name } = req.params
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;  
+  const url = images.find(item => item === image);
+  console.log(ip);
+  console.log(lookup(ip));
+  
+  request({
+    url: url,
+    encoding: null
+  }, 
+  (err, resp, buffer) => {
+    res.set("Content-Type", "image/jpeg");
+    if (!err && resp.statusCode === 200){
+      return res.send(resp.body);
+    } else {
+      return res.sendFile('assets/pedro_sanchez.jpg', { root: __dirname });
     }
   });
 })
