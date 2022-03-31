@@ -1,6 +1,7 @@
 const express = require('express')
 const { handleError } = require('./config/error')
 const path = require('path')
+const middleware = require('./middleware/info.middleware')
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -10,10 +11,12 @@ app.use(express.json({ limit: '5mb' }))
 require('./routes')(app)
 
 // 404 Not found error
-app.use((req, res, next) => {
-  console.error('Not found error')
-  return res.sendFile('default.gif', { root: path.join(__dirname, '/assets') })
-})
+app.use(
+  middleware,
+  (req, res, next) => {
+    console.error('Not found error')
+    return res.sendFile('default.gif', { root: path.join(__dirname, '/assets') })
+  })
 
 // Error handling
 process.on('uncaughtException', err => {
