@@ -1,69 +1,35 @@
 const express = require('express')
-const request = require('request');
-const { lookup } = require('geoip-lite')
+const { handleError } = require('./config/error')
+const path = require('path')
 const app = express()
 const port = process.env.PORT || 3000
 
-const images = [
-  "https://media2.giphy.com/media/YQitE4YNQNahy/giphy-downsized-large.gif",
-  "https://c.tenor.com/jCk8c5_Q4J0AAAAC/hacker.gif",
-  "http://images7.memedroid.com/images/UPLOADED204/6007365f4b41c.jpeg",
-  "https://pbs.twimg.com/media/FFY-EUJXEAcyByD.jpg",
-  "https://c.tenor.com/pHUCmrOOt0YAAAAd/naruto-pain.gif",
-  "https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2021/07/16/16264514660383.jpg",
-  "https://preview.redd.it/8j67n386w2261.jpg?auto=webp&s=21be6624c2f709960dffc76113cc981091c1b3e1",
-  "https://shutupandtakemymoney.com/wp-content/uploads/2020/05/shrekira-shakira-shrek-meme.jpg",
-  "https://phantom-marca.unidadeditorial.es/b7cf26953f02a20f090557e23c9664d9/crop/0x0/867x488/resize/660/f/webp/assets/multimedia/imagenes/2021/11/02/16358489791748.jpg",
-  "https://media.tenor.com/images/9eff635895abbf89ea8f8c8137fca4bf/tenor.gif",
-  "https://c.tenor.com/a2mZDtftfEwAAAAC/hasbulla.gif",
-  "https://c.tenor.com/VndsjrMAEPwAAAAC/pedro-sanchez.gif",
-  "https://i0.wp.com/hipertextual.com/wp-content/uploads/2017/06/giphy-4.gif?fit=500%2C345&ssl=1",
-  "https://pbs.twimg.com/profile_images/618542661847379968/OzA2ALdY_400x400.jpg",
-  "https://i.pinimg.com/236x/52/ae/b5/52aeb5a854edb7a99210776cd91e1c9a--humor-memes-pikachu.jpg",
-  "https://images3.memedroid.com/images/UPLOADED826/618ca6e492263.jpeg",
-  "https://i.pinimg.com/originals/f4/97/d5/f497d55088aba26d78c26958a636b97a.gif",
-  "https://c.tenor.com/X1SPPzfGWC4AAAAC/shrek.gif"
-]
+app.use(express.json({ limit: '5mb' }))
 
-app.get('/', async (req, res) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;  
-  const url = images[Math.floor(Math.random() * images.length)];
-  console.log(ip);
-  console.log(lookup(ip));
-  
-  request({
-    url: url,
-    encoding: null
-  }, 
-  (err, resp, buffer) => {
-    res.set("Content-Type", "image/jpeg");
-    if (!err && resp.statusCode === 200){
-      return res.send(resp.body);
-    } else {
-      return res.sendFile('assets/pedro_sanchez.jpg', { root: __dirname });
-    }
-  });
+// Routes
+require('./routes')(app)
+
+// 404 Not found error
+app.use((req, res, next) => {
+  console.error('Not found error')
+  return res.sendFile('default.gif', { root: path.join(__dirname, '/assets') })
 })
 
-app.get('/:image_name', async (req, res) => {
-  const { image_name } = req.params
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;  
-  const url = images.find(item => item === image);
-  console.log(ip);
-  console.log(lookup(ip));
-  
-  request({
-    url: url,
-    encoding: null
-  }, 
-  (err, resp, buffer) => {
-    res.set("Content-Type", "image/jpeg");
-    if (!err && resp.statusCode === 200){
-      return res.send(resp.body);
-    } else {
-      return res.sendFile('assets/pedro_sanchez.jpg', { root: __dirname });
-    }
-  });
+// Error handling
+process.on('uncaughtException', err => {
+  console.fatal('----- Uncaught exception -----')
+  console.fatal(err)
+  console.fatal('----------------------------------')
+})
+
+process.on('unhandledRejection', err => {
+  console.fatal('----- Unhandled Rejection -----')
+  console.fatal(err)
+  console.fatal('----------------------------------')
+})
+
+app.use((err, req, res, next) => {
+  handleError(err, req, res)
 })
 
 app.listen(port, () => {

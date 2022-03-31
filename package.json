@@ -16,7 +16,13 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "eslint": "^8.11.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "standard": "^16.0.4"
+  },
+  "eslintConfig": {
+    "extends": "./node_modules/standard/eslintrc.json",
+    "env": {
+      "jest": true
+    }
   }
 }
