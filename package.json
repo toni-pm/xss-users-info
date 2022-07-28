@@ -2,7 +2,7 @@
   "name": "xss-get-client-info",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/toni-pm/xss-get-client-info.git",
+  "repository": "https://github.com/toni-pm/xss-users-info.git",
   "author": "Toni Peraira <toniperairam@gmail.com>",
   "scripts": {
     "dev": "nodemon index.js",
